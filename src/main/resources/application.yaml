@@ -1,0 +1,23 @@
+---
+login:
+  url: http://rfe600-login-page.apps.numma.kaiserpfalz-edv.de/index.html
+
+cookie:
+  name: javasession
+  path: /
+  domain: rfe600-reproducer.apps.numma.kaiserpfalz-edv.de
+  isSecure: false
+  httpOnly: true
+
+"%dev":
+  login:
+    url: http://localhost:8080/index.html
+  cookie:
+    domain: localhost
+
+"%test":
+  login:
+    url: http://localhost:8081/index.html
+  cookie:
+    domain: localhost
+    name: session
