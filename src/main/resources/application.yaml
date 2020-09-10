@@ -1,11 +1,11 @@
 ---
 login:
-  url: http://rfe600-login-page.apps.numma.kaiserpfalz-edv.de/index.html
+  url: http://login-rlichti-eu.berlin.dbcs.db.de/login
 
 cookie:
   name: javasession
   path: /
-  domain: rfe600-reproducer.apps.numma.kaiserpfalz-edv.de
+  domain: reproducer-rlichti-eu.berlin.dbcs.db.de
   isSecure: false
   httpOnly: true
 
@@ -22,19 +22,25 @@ quarkus:
   openshift:
     part-of: RFE-600
     env-vars:
-      login-url:
-        value: http://rfe600-login-page.apps.numma.kaiserpfalz-edv.de/index.html
-      cookie-name:
+      "login.url":
+        value: http://login-rlichti-eu.berlin.dbcs.db.de/login
+      "cookie.name":
         value: javasession
-      cookie-path:
+      "cookie.path":
         value: /
-      cookie-domain:
-        value: rfe600-reproducer.apps.numma.kaiserpfalz-edv.de
-      cookie-isSecure:
+      "cookie.domain":
+        value: reproducer-rlichti-eu.berlin.dbcs.db.de
+      "cookie.isSecure":
         value: false
-      cookie-httpOnly:
+      "cookie.httpOnly":
         value: true
     replicas: 2
+    readiness-probe:
+      initial-delay: 5s
+      period: 60s
+    liveness-probe:
+      initial-delay: 5s
+      period: 60s
 
 "%dev":
   login:

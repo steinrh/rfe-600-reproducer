@@ -23,7 +23,7 @@ public class ExampleResource {
     @Context
     HttpServerRequest request;
 
-    @ConfigProperty(name = "login.url", defaultValue = "localhost:8080/index.html")
+    @ConfigProperty(name = "login.url", defaultValue = "localhost:8080/login")
     String redirectURL;
 
     @ConfigProperty(name = "cookie.name", defaultValue = "javasession")
