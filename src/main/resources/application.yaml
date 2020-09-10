@@ -9,6 +9,33 @@ cookie:
   isSecure: false
   httpOnly: true
 
+quarkus:
+  container-image:
+    group: klenkes74
+    name: rfe600-reproducer
+    version: 1.0.0-SNAPSHOT
+    registry: quay.io
+    username: klenkes74
+    build: true
+    push: false
+
+  openshift:
+    part-of: RFE-600
+    env-vars:
+      login-url:
+        value: http://rfe600-login-page.apps.numma.kaiserpfalz-edv.de/index.html
+      cookie-name:
+        value: javasession
+      cookie-path:
+        value: /
+      cookie-domain:
+        value: rfe600-reproducer.apps.numma.kaiserpfalz-edv.de
+      cookie-isSecure:
+        value: false
+      cookie-httpOnly:
+        value: true
+    replicas: 2
+
 "%dev":
   login:
     url: http://localhost:8080/index.html
