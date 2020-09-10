@@ -23,6 +23,9 @@ public class LoginPage {
     @ConfigProperty(name = "cookie.domain", defaultValue = "/")
     String domain;
 
+    @ConfigProperty(name = "resource.port", defaultValue = "")
+    String port;
+
 
     @GET
     @Produces(MediaType.TEXT_HTML)
@@ -167,7 +170,9 @@ public class LoginPage {
                         "        <div class=\"right-section\">\n" +
                         "            <h3>Next steps</h3>\n" +
                         "\n" +
-                        "            <form action=\"http://" + domain + "/hello\" method=\"post\">\n" +
+                        "            <form action=\"http://" + domain
+                        + (port != "" ? port : "")
+                        + "/hello\" method=\"post\">\n" +
                         "                <input name=\"data\" value=\"default value\" maxlength=\"50\" />\n" +
                         "                <button name=\"ok\" title=\"OK\" value=\"OK\" type=\"submit\" />\n" +
                         "                <button name=\"reset\" title=\"Reset\" value=\"Reset\" type=\"reset\" />\n" +

@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.util.Map;
 import java.util.UUID;
 
 @Path("/hello")
@@ -41,6 +42,11 @@ public class ExampleResource {
     @ConfigProperty(name = "cookie.httpOnly", defaultValue = "false")
     boolean httpOnly;
 
+
+    @ConfigProperty(name = "pod.name", defaultValue = "pod-not-set")
+    String podName;
+
+
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public Response getHello() {
@@ -54,18 +60,31 @@ public class ExampleResource {
     }
 
     public Response doTheWork() {
-        Response.ResponseBuilder result;
+        StringBuilder result = new StringBuilder();
 
-        for (String cookieName : request.cookieMap().keySet()) {
-            Cookie cookie = request.cookieMap().get(cookieName);
+        result.append("Pod: ").append(podName);
 
-            LOGGER.infof("Cookie: name=%s, value=%s, domain=%s, path=%s, samesite=%s, isSecure=%b, httpOnly=%b",
-                         cookieName, cookie.getValue(), cookie.getDomain(), cookie.getPath(), cookie.getSameSite(), cookie.isSecure(), cookie.isHttpOnly());
+        if (request.cookieCount() > 0) {
+            result.append("\nCookies:");
+
+            for (Map.Entry<String, Cookie> entry : request.cookieMap().entrySet()) {
+                String key = entry.getKey();
+                Cookie cookie = entry.getValue();
+
+                result.append("\n- name=").append(key).append(", value=").append(cookie.getValue());
+
+                result.append(" (sameSite=").append(cookie.getSameSite())
+                        .append(", domain=").append(cookie.getDomain())
+                        .append(", path=").append(cookie.getPath())
+                        .append(", httpOnly=").append(cookie.isHttpOnly())
+                        .append(", secure=").append(cookie.isSecure())
+                        .append(")");
+            }
         }
 
         Cookie cookie = request.getCookie(cookieName);
         if (cookie != null) {
-            return Response.ok().entity("Cookie: " + cookie.getName() + "=" + cookie.getValue()).build();
+            return Response.ok().entity(result.toString()).build();
         } else {
             LOGGER.error("No cookie set!");
 

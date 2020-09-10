@@ -44,13 +44,17 @@ quarkus:
 
 "%dev":
   login:
-    url: http://localhost:8080/index.html
+    url: http://localhost:8080/login
+  resource:
+    port: ":8080"
   cookie:
     domain: localhost
 
 "%test":
   login:
-    url: http://localhost:8081/index.html
+    url: http://localhost:8081/login
+  resource:
+    port: ":8080"
   cookie:
     domain: localhost
     name: session
