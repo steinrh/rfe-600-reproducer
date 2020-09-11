@@ -1,0 +1,238 @@
+kind: Template
+apiVersion: template.openshift.io/v1
+labels:
+  delete: rfe-600-reproducer
+message: >-
+  The following service has been deployed:
+
+  Resource URL: https://${RESOURCE_DOMAIN}/hello
+  Login URL: https://${LOGIN_DOMAIN}/login
+
+  Please connect to the resource URL. You will be redirected to the login URL.
+  After clicking on the OK button you will be sent via a POST request to the
+  resource URL.
+metadata:
+  annotations:
+    description: >-
+      Reproducer for RFE-600.
+    openshift.io/display-name: RFE-600 Reproducer
+    openshift.io/documentation-url: https://github.com/klenkes74/rfe-600-reproducer
+    openshift.io/support-url: https://github.com/klenkes74/rfe-600-reproducer
+    tags: 'other'
+  name: rfe-600-reproducer
+parameters:
+  - name: LOGIN_DOMAIN
+    description: The domain the login page is located on. Will be prefixed with "https://" and postfixed with "/login"
+    value: login-<project>.<app-cluster-domain>
+    required: true
+  - name: RESOURCE_DOMAIN
+    description: The domain the resource page is located on. Will be prefixed with "https://" and postfixed with "/hello"
+    value: resource-<project>.<app-cluster-domain>
+    required: true
+  - name: cookie.path
+    description: The path of the cookie.
+    value: /
+    required: true
+  - name: cookie.name
+    description: The name of the cookie to set in the resource.
+    value: session
+    required: true
+  - name: cookie.httpOnly
+    description: The cookie parameter httpOnly.
+    value: "true"
+    required: true
+  - name: cookie.isSecure
+    description: The cookie parameter isSecure.
+    value: "true"
+    required: true
+objects:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      app.openshift.io/vcs-url: https://github.com/klenkes74/rfe-600-reproducer.git
+      app.quarkus.io/build-timestamp: 2020-09-10 - 18:05:19 +0000
+      app.quarkus.io/commit-id: 8402303184fb12884850d0de7a499998a14e5f1c
+      app.quarkus.io/vcs-url: https://github.com/klenkes74/rfe-600-reproducer.git
+      prometheus.io/path: /metrics
+      prometheus.io/port: "8080"
+      prometheus.io/scrape: "true"
+    labels:
+      app.kubernetes.io/name: rfe600-reproducer
+      app.kubernetes.io/part-of: RFE-600
+      app.kubernetes.io/version: 1.0.0-SNAPSHOT
+      app.openshift.io/runtime: quarkus
+    name: rfe600-reproducer
+  spec:
+    ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app.kubernetes.io/name: rfe600-reproducer
+      app.kubernetes.io/part-of: RFE-600
+      app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    sessionAffinity: ClientIP
+    type: ClusterIP
+- kind: DeploymentConfig
+  apiVersion: apps.openshift.io/v1
+  metadata:
+    annotations:
+      app.openshift.io/vcs-url: https://github.com/klenkes74/rfe-600-reproducer.git
+      app.quarkus.io/build-timestamp: 2020-09-10 - 18:05:19 +0000
+      app.quarkus.io/commit-id: 8402303184fb12884850d0de7a499998a14e5f1c
+      app.quarkus.io/vcs-url: https://github.com/klenkes74/rfe-600-reproducer.git
+      prometheus.io/path: /metrics
+      prometheus.io/port: "8080"
+      prometheus.io/scrape: "true"
+    labels:
+      app.kubernetes.io/name: rfe600-reproducer
+      app.kubernetes.io/part-of: RFE-600
+      app.kubernetes.io/version: 1.0.0-SNAPSHOT
+      app.openshift.io/runtime: quarkus
+    name: rfe600-reproducer
+  spec:
+    replicas: 3
+    revisionHistoryLimit: 3
+    selector:
+      app.kubernetes.io/name: rfe600-reproducer
+      app.kubernetes.io/part-of: RFE-600
+      app.kubernetes.io/version: 1.0.0-SNAPSHOT
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 100%
+        maxUnavailable: 0%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          app.openshift.io/vcs-url: https://github.com/klenkes74/rfe-600-reproducer.git
+          app.quarkus.io/build-timestamp: 2020-09-10 - 18:05:19 +0000
+          app.quarkus.io/commit-id: 8402303184fb12884850d0de7a499998a14e5f1c
+          app.quarkus.io/vcs-url: https://github.com/klenkes74/rfe-600-reproducer.git
+          prometheus.io/path: /metrics
+          prometheus.io/port: "8080"
+          prometheus.io/scrape: "true"
+        labels:
+          app.kubernetes.io/name: rfe600-reproducer
+          app.kubernetes.io/part-of: RFE-600
+          app.kubernetes.io/version: 1.0.0-SNAPSHOT
+          app.openshift.io/runtime: quarkus
+      spec:
+        containers:
+        - args:
+          - -jar
+          - /deployments/rfe600-cookielogger-1.0.0-SNAPSHOT-runner.jar
+          - -cp
+          - /deployments/lib/io.quarkus.quarkus-security-runtime-spi-1.7.3.Final.jar:/deployments/lib/io.quarkus.quarkus-development-mode-spi-1.7.3.Final.jar:/deployments/lib/org.reactivestreams.reactive-streams-1.0.3.jar:/deployments/lib/io.smallrye.reactive.mutiny-0.7.0.jar:/deployments/lib/io.quarkus.security.quarkus-security-1.1.2.Final.jar:/deployments/lib/io.netty.netty-codec-4.1.49.Final.jar:/deployments/lib/io.netty.netty-handler-4.1.49.Final.jar:/deployments/lib/io.quarkus.quarkus-netty-1.7.3.Final.jar:/deployments/lib/io.netty.netty-common-4.1.49.Final.jar:/deployments/lib/io.netty.netty-buffer-4.1.49.Final.jar:/deployments/lib/io.netty.netty-transport-4.1.49.Final.jar:/deployments/lib/io.netty.netty-codec-socks-4.1.49.Final.jar:/deployments/lib/io.netty.netty-handler-proxy-4.1.49.Final.jar:/deployments/lib/io.netty.netty-codec-http-4.1.49.Final.jar:/deployments/lib/io.netty.netty-codec-http2-4.1.49.Final.jar:/deployments/lib/io.netty.netty-resolver-4.1.49.Final.jar:/deployments/lib/io.netty.netty-codec-dns-4.1.49.Final.jar:/deployments/lib/io.netty.netty-resolver-dns-4.1.49.Final.jar:/deployments/lib/com.fasterxml.jackson.core.jackson-core-2.11.2.jar:/deployments/lib/io.vertx.vertx-core-3.9.2.jar:/deployments/lib/io.quarkus.quarkus-vertx-core-1.7.3.Final.jar:/deployments/lib/io.vertx.vertx-web-common-3.9.2.jar:/deployments/lib/io.vertx.vertx-auth-common-3.9.2.jar:/deployments/lib/io.vertx.vertx-bridge-common-3.9.2.jar:/deployments/lib/io.vertx.vertx-web-3.9.2.jar:/deployments/lib/io.quarkus.quarkus-vertx-http-1.7.3.Final.jar:/deployments/lib/org.jboss.spec.javax.ws.rs.jboss-jaxrs-api_2.1_spec-2.0.1.Final.jar:/deployments/lib/org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec-2.0.0.Final.jar:/deployments/lib/org.jboss.resteasy.resteasy-core-spi-4.5.6.Final.jar:/deployments/lib/com.ibm.async.asyncutil-0.1.0.jar:/deployments/lib/org.jboss.resteasy.resteasy-core-4.5.6.Final.jar:/deployments/lib/com.sun.activation.jakarta.activation-1.2.1.jar:/deployments/lib/io.quarkus.quarkus-resteasy-common-1.7.3.Final.jar:/deployments/lib/jakarta.validation.jakarta.validation-api-2.0.2.jar:/deployments/lib/io.quarkus.quarkus-resteasy-server-common-1.7.3.Final.jar:/deployments/lib/io.quarkus.quarkus-resteasy-1.7.3.Final.jar:/deployments/lib/org.yaml.snakeyaml-1.26.jar:/deployments/lib/io.smallrye.config.smallrye-config-common-1.8.5.jar:/deployments/lib/io.smallrye.common.smallrye-common-constraint-1.1.0.jar:/deployments/lib/io.smallrye.config.smallrye-config-source-yaml-1.8.5.jar:/deployments/lib/io.smallrye.common.smallrye-common-annotation-1.1.0.jar:/deployments/lib/io.smallrye.common.smallrye-common-function-1.1.0.jar:/deployments/lib/io.smallrye.common.smallrye-common-expression-1.1.0.jar:/deployments/lib/io.smallrye.config.smallrye-config-1.8.5.jar:/deployments/lib/org.jboss.logging.jboss-logging-3.3.2.Final.jar:/deployments/lib/org.jboss.logmanager.jboss-logmanager-embedded-1.0.4.jar:/deployments/lib/org.jboss.logging.jboss-logging-annotations-2.1.0.Final.jar:/deployments/lib/org.jboss.threads.jboss-threads-3.1.1.Final.jar:/deployments/lib/org.slf4j.slf4j-api-1.7.30.jar:/deployments/lib/org.jboss.slf4j.slf4j-jboss-logging-1.2.0.Final.jar:/deployments/lib/org.graalvm.sdk.graal-sdk-20.1.0.jar:/deployments/lib/org.wildfly.common.wildfly-common-1.5.4.Final-format-001.jar:/deployments/lib/io.quarkus.quarkus-bootstrap-runner-1.7.3.Final.jar:/deployments/lib/io.quarkus.quarkus-core-1.7.3.Final.jar:/deployments/lib/org.eclipse.microprofile.config.microprofile-config-api-1.4.jar:/deployments/lib/io.quarkus.quarkus-config-yaml-1.7.3.Final.jar:/deployments/lib/org.eclipse.microprofile.opentracing.microprofile-opentracing-api-1.3.3.jar:/deployments/lib/org.eclipse.microprofile.rest.client.microprofile-rest-client-api-1.4.1.jar:/deployments/lib/io.opentracing.opentracing-api-0.31.0.jar:/deployments/lib/io.opentracing.opentracing-noop-0.31.0.jar:/deployments/lib/io.opentracing.contrib.opentracing-web-servlet-filter-0.2.3.jar:/deployments/lib/io.opentracing.contrib.opentracing-concurrent-0.2.0.jar:/deployments/lib/io.opentracing.contrib.opentracing-jaxrs2-0.4.1.jar:/deployments/lib/io.opentracing.contrib.opentracing-tracerresolver-0.1.8.jar:/deployments/lib/io.opentracing.contrib.opentracing-interceptors-0.0.4.jar:/deployments/lib/io.smallrye.smallrye-opentracing-1.3.4.jar:/deployments/lib/io.smallrye.smallrye-fault-tolerance-tracing-propagation-4.3.0.jar:/deployments/lib/jakarta.inject.jakarta.inject-api-1.0.jar:/deployments/lib/io.opentracing.opentracing-util-0.31.0.jar:/deployments/lib/com.google.code.gson.gson-2.8.6.jar:/deployments/lib/io.jaegertracing.jaeger-core-0.34.3.jar:/deployments/lib/org.apache.thrift.libthrift-0.13.0.jar:/deployments/lib/com.squareup.okio.okio-1.17.2.jar:/deployments/lib/com.squareup.okhttp3.okhttp-3.14.9.jar:/deployments/lib/io.jaegertracing.jaeger-thrift-0.34.3.jar:/deployments/lib/jakarta.activation.jakarta.activation-api-1.2.1.jar:/deployments/lib/io.quarkus.quarkus-jaeger-1.7.3.Final.jar:/deployments/lib/org.glassfish.jakarta.json-1.1.6.jar:/deployments/lib/io.quarkus.quarkus-jsonp-1.7.3.Final.jar:/deployments/lib/jakarta.servlet.jakarta.servlet-api-4.0.3.jar:/deployments/lib/io.quarkus.quarkus-smallrye-opentracing-1.7.3.Final.jar:/deployments/lib/org.eclipse.microprofile.fault-tolerance.microprofile-fault-tolerance-api-2.1.1.jar:/deployments/lib/io.smallrye.smallrye-fault-tolerance-api-4.3.0.jar:/deployments/lib/io.smallrye.smallrye-fault-tolerance-core-4.3.0.jar:/deployments/lib/jakarta.enterprise.concurrent.jakarta.enterprise.concurrent-api-1.1.2.jar:/deployments/lib/io.smallrye.smallrye-fault-tolerance-4.3.0.jar:/deployments/lib/jakarta.el.jakarta.el-api-3.0.3.jar:/deployments/lib/jakarta.interceptor.jakarta.interceptor-api-1.2.5.jar:/deployments/lib/jakarta.enterprise.jakarta.enterprise.cdi-api-2.0.2.jar:/deployments/lib/jakarta.annotation.jakarta.annotation-api-1.3.5.jar:/deployments/lib/org.jboss.logging.commons-logging-jboss-logging-1.0.0.Final.jar:/deployments/lib/io.smallrye.smallrye-context-propagation-api-1.0.13.jar:/deployments/lib/io.smallrye.smallrye-context-propagation-1.0.13.jar:/deployments/lib/io.quarkus.quarkus-smallrye-context-propagation-1.7.3.Final.jar:/deployments/lib/io.smallrye.smallrye-fault-tolerance-context-propagation-4.3.0.jar:/deployments/lib/io.quarkus.quarkus-smallrye-fault-tolerance-1.7.3.Final.jar:/deployments/lib/org.eclipse.microprofile.health.microprofile-health-api-2.2.jar:/deployments/lib/io.smallrye.smallrye-health-api-2.2.3.jar:/deployments/lib/io.smallrye.smallrye-health-2.2.3.jar:/deployments/lib/io.smallrye.smallrye-health-ui-2.2.3.jar:/deployments/lib/io.smallrye.smallrye-health-provided-checks-2.2.3.jar:/deployments/lib/io.quarkus.quarkus-smallrye-health-1.7.3.Final.jar:/deployments/lib/io.smallrye.smallrye-metrics-2.4.3.jar:/deployments/lib/jakarta.transaction.jakarta.transaction-api-1.3.3.jar:/deployments/lib/io.quarkus.arc.arc-1.7.3.Final.jar:/deployments/lib/org.eclipse.microprofile.context-propagation.microprofile-context-propagation-api-1.0.1.jar:/deployments/lib/io.quarkus.quarkus-arc-1.7.3.Final.jar:/deployments/lib/org.eclipse.microprofile.metrics.microprofile-metrics-api-2.3.jar:/deployments/lib/io.quarkus.quarkus-smallrye-metrics-1.7.3.Final.jar:/deployments/lib/io.quarkus.quarkus-kubernetes-client-internal-1.7.3.Final.jar:/deployments/lib/io.quarkus.quarkus-openshift-1.7.3.Final.jar
+          - -Dquarkus.http.host=0.0.0.0
+          - -Djava.util.logging.manager=org.jboss.logmanager.LogManager
+          command:
+          - java
+          env:
+          - name: KUBERNETES_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: pod.name
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: JAVA_APP_JAR
+            value: /deployments/rfe600-cookielogger-1.0.0-SNAPSHOT-runner.jar
+          - name: cookie.path
+            value: /
+          - name: login.url
+            value: https://${LOGIN_DOMAIN}/login
+          - name: cookie.name
+            value: ${SESSION_COOKIE}
+          - name: cookie.domain
+            value: ${RESOURCE_DOMAIN}
+          - name: cookie.httpOnly
+            value: ${HTTP_ONLY}
+          - name: cookie.isSecure
+            value: ${IS_SECURE}
+          image: quay.io/klenkes74/rfe600-reproducer:1.0.0-SNAPSHOT
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health/live
+              port: 8080
+              scheme: HTTP
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 10
+          name: rfe600-reproducer
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health/ready
+              port: 8080
+              scheme: HTTP
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 10
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1Gi
+            requests:
+              cpu: 250m
+              memory: 256Mi
+        restartPolicy: Always
+        serviceAccount: rfe600-reproducer
+        serviceAccountName: rfe600-reproducer
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    labels:
+      app.kubernetes.io/name: rfe600-reproducer
+      app.kubernetes.io/part-of: RFE-600
+      app.kubernetes.io/version: 1.0.0-SNAPSHOT
+      app.openshift.io/runtime: quarkus
+    name: login
+  spec:
+    host: ${LOGIN_URL}
+    port:
+      targetPort: http
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+    to:
+      kind: Service
+      name: rfe600-reproducer
+      weight: 100
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    labels:
+      app.kubernetes.io/name: rfe600-reproducer
+      app.kubernetes.io/part-of: RFE-600
+      app.kubernetes.io/version: 1.0.0-SNAPSHOT
+      app.openshift.io/runtime: quarkus
+    name: reproducer
+    selfLink: /apis/route.openshift.io/v1/namespaces/rlichti-eu/routes/reproducer
+  spec:
+    host: ${RESOURCE_DOMAIN}
+    port:
+      targetPort: http
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+    to:
+      kind: Service
+      name: rfe600-reproducer
+      weight: 100

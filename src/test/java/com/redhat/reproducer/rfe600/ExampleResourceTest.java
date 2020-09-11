@@ -26,7 +26,9 @@ public class ExampleResourceTest {
                 .post("/hello")
           .then()
              .statusCode(200)
-             .body(is("Cookie: session=abcd1234"));
+             .body(is("Pod: pod-not-set\n" +
+                     "Cookies:\n" +
+                     "- name=session, value=abcd1234 (sameSite=null, domain=null, path=null, httpOnly=false, secure=false)"));
     }
 
 
